@@ -16,18 +16,21 @@ export const usePlaylist = () => {
  */
 export const loadPlaylist = (name, songs, options) => {
 	if (!songs || !Array.isArray(songs)) throw new Error();
+	const isPaused = options?.isPaused ? options.isPaused : false;
+	const isRandom = options?.order === "random";
+	const currentSong = !isRandom
+		? songs[0]
+		: songs[Math.floor(Math.random() * songs.length)];
 
 	const playlist = usePlaylistImpl();
 	if (playlist.currentPlaying) return;
 
 	playlist.$patch({
-		currentSong: songs[0],
+		currentSong,
 		name,
 		songs,
-		nextSong: songs[1],
-		prevSong: songs[songs.length - 1],
 		song: {
-			isPaused: options?.isPaused ? options.isPaused : false,
+			isPaused,
 		},
 	});
 	if (options) {
@@ -60,3 +63,15 @@ export const setPlaylist = (data) => {
 };
 
 export const handleHistory = (data) => {};
+
+export const resetProgress = () => {
+	const playlist = usePlaylistImpl();
+
+	playlist.$patch({
+		song: {
+			progress: 0,
+			songDuration: 0,
+			isPaused: false,
+		},
+	});
+};

@@ -1,65 +1,36 @@
 <script setup>
-import {getPlayListOrder, playlists, songs} from "@/lib/utils";
-import {loadPlaylist, usePlaylist} from "@/usePlaylistApi";
+import {getPlayListOrder, songs} from "@/lib/utils";
+import {loadPlaylist, resetProgress, usePlaylist} from "@/usePlaylistApi";
 import {useHistory} from "@/stores/useHistory";
-import {
-	SkipForward,
-	Pause,
-	Play,
-	SkipBack,
-	Shuffle,
-	Dices,
-	ArrowDownUp,
-	Repeat,
-} from "lucide-vue-next";
-import {inject} from "vue";
+import {SkipForward, Pause, Play, SkipBack, Shuffle} from "lucide-vue-next";
+import {inject, ref} from "vue";
 
 const audioRef = inject("audioRef");
 const playlist = usePlaylist();
 const history = useHistory();
+const playedStack = ref({});
+const isRandom = ref(playlist.options.order === "random");
 
 const startPlaying = () => {
 	loadPlaylist("Linkin Park", songs, {
-		sort: "path",
-	});
-	history.$patch({
-		songs: [songs[0]],
+		key: "path",
 	});
 };
 
-const handlePausePlay = async () => {
+const handlePausePlay = () => {
 	if (!playlist.currentSong) return startPlaying();
+	const isPaused = playlist.song.isPaused;
 
-	if (playlist.song.isPaused) {
-		playlist.$patch({
-			song: {
-				isPaused: false,
-			},
-		});
-
-		audioRef.value.play();
-	} else {
-		playlist.$patch({
-			song: {
-				isPaused: true,
-			},
-		});
-		audioRef.value.pause();
-	}
-};
-
-const resetProgress = () => {
 	playlist.$patch({
 		song: {
-			progress: 0,
-			songDuration: 0,
-			isPaused: false,
+			isPaused: isPaused ? false : true,
 		},
 	});
+
+	isPaused ? audioRef.value.play() : audioRef.value.pause();
 };
 
 const handleHistory = (songToPlay) => {
-	// hit the history
 	const alreadyListened = history.songs.some(
 		(song) => song.path === songToPlay.path
 	);
@@ -81,78 +52,82 @@ const handleHistory = (songToPlay) => {
 	history.add(songToPlay);
 };
 
-const handleNextSong = () => {
-	if (!playlist.songs || !playlist.currentSong) return;
+const handleRandom = () => {
+	const key = playlist.currentSong[playlist.options.key];
+	console.log("asd");
+	if (!playedStack.value[key]) {
+		playedStack.value[key] = playlist.currentSong;
+	}
 
-	resetProgress();
+	const filteredValue = playlist.songs.filter((song) => {
+		if (!playedStack.value[song.path]) {
+			return song;
+		}
+	});
 
-	const {currentSong, prevSong, nextSong} = getPlayListOrder(
-		playlist.songs,
-		playlist.options.sort,
-		playlist.currentSong.path
-	);
-	const isLastTrack = nextSong === null;
-	const songToPlay = !isLastTrack ? nextSong : playlist.songs[0];
+	const randomIndex = Math.floor(Math.random() * filteredValue.length);
+	const randomSong = filteredValue[randomIndex];
+
+	const lastTrack = filteredValue.length === 1;
+	if (lastTrack) {
+		playedStack.value = {};
+	}
+
+	const nextSongIfLastTrack =
+		playlist.songs[Math.floor(Math.random() * playlist.songs.length)];
+	const songToPlay = lastTrack ? nextSongIfLastTrack : randomSong;
 
 	playlist.$patch({
 		currentSong: songToPlay,
+		song: {
+			progress: 0,
+			songDuration: 0,
+			isPaused: false,
+		},
 	});
+
 	handleHistory(songToPlay);
-
-	// // if (playlist.options.order === "random") {
-	// // 	played.value.push(playlist.currentSong[playlist.options.sort]);
-	// // 	const filteredValue = playlist.songs.filter((song) => {
-	// // 		if (!played.value.includes(song.path)) return song;
-	// // 	});
-
-	// // 	const randomIndex = Math.floor(Math.random() * filteredValue.length);
-	// // 	const randomSong = filteredValue[randomIndex];
-	// // 	const lastTrack = filteredValue.length === 1;
-
-	// // 	if (lastTrack) {
-	// // 		playlist.$patch({
-	// // 			currentSong:
-	// // 				playlist.songs[Math.floor(Math.random() * playlist.songs.length)],
-	// // 			song: {
-	// // 				progress: 0,
-	// // 				songDuration: 0,
-	// // 				isPaused: false,
-	// // 			},
-	// // 		});
-	// // 		return (audioRef.value.src =
-	// // 			playlist.songs[Math.floor(Math.random() * playlist.songs.length)]);
-	// // 	}
-	// // 	playlist.$patch({
-	// // 		currentSong: randomSong,
-	// // 		song: {
-	// // 			progress: 0,
-	// // 			songDuration: 0,
-	// // 			isPaused: false,
-	// // 		},
-	// // 	});
-
-	// // 	return (audioRef.value.src = randomSong);
-	// // }
+	audioRef.value.src = songToPlay;
 };
 
-const handlePreviousSong = () => {
+const handleControls = (action) => {
 	if (!playlist.songs || !playlist.currentSong) return null;
-	resetProgress();
+	const isRandom = playlist.options.order === "random";
 
-	const {currentSong, prevSong, nextSong} = getPlayListOrder(
+	const lastTrack = playlist.songs[playlist.songs.length - 1];
+	const firstTrack = playlist.songs[0];
+	if (isRandom) {
+		return handleRandom();
+	}
+
+	const {prevSong, nextSong} = getPlayListOrder(
 		playlist.songs,
-		"path",
+		playlist.options.key,
 		playlist.currentSong.path
 	);
 
 	const isFirstTrack = prevSong === null;
-	const lastTrack = playlist.songs[playlist.songs.length - 1];
-	const songToPlay = !isFirstTrack ? prevSong : lastTrack;
+	const isLastTrack = nextSong === null;
+	let songToPlay = null;
 
-	handleHistory(songToPlay);
-	return playlist.$patch({
-		currentSong: !isFirstTrack ? prevSong : lastTrack,
+	resetProgress();
+
+	if (action === "prev") {
+		songToPlay = !isFirstTrack ? prevSong : lastTrack;
+	}
+	if (action === "next") {
+		songToPlay = !isLastTrack ? nextSong : firstTrack;
+	}
+
+	playlist.$patch({
+		currentSong: songToPlay,
 	});
+	return handleHistory(songToPlay);
+};
+const defineRandom = () => {
+	const isR = playlist.options.order === "random";
+	playlist.$patch({options: {order: isR ? "default" : "random"}});
+	isRandom.value = !isRandom.value;
 };
 </script>
 
@@ -169,7 +144,7 @@ const handlePreviousSong = () => {
 			/>
 		</button> -->
 		<div className="flex items-center gap-8">
-			<button @click="handlePreviousSong">
+			<button @click="handleControls('prev')">
 				<SkipBack
 					fill="white"
 					color="white"
@@ -194,7 +169,7 @@ const handlePreviousSong = () => {
 				/>
 			</button>
 
-			<button @click="handleNextSong">
+			<button @click="handleControls('next')">
 				<SkipForward
 					fill="white"
 					color="white"
@@ -202,13 +177,13 @@ const handlePreviousSong = () => {
 				/>
 			</button>
 		</div>
-		<!-- <button>
+		<button>
 			<Shuffle
-				fill="white"
-				color="white"
+				@click="defineRandom"
+				:fill="[isRandom ? 'white' : 'gray']"
+				:color="[isRandom ? 'white' : 'gray']"
 				:size="30"
-				class=""
 			/>
-		</button> -->
+		</button>
 	</div>
 </template>

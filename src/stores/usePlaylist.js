@@ -20,7 +20,7 @@ export const usePlaylist = defineStore("playlist", {
 			songDuration: 0,
 		},
 		options: {
-			sort: "path",
+			key: "path",
 			order: "default",
 		},
 	}),

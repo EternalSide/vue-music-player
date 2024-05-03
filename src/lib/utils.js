@@ -9,22 +9,17 @@ export const getPlayListOrder = (array, targetKey, targetValue) => {
 	const index = array.findIndex((obj) => obj[targetKey] === targetValue);
 
 	let prevSong = null;
-	let currentSong = null;
 	let nextSong = null;
 
 	if (index > 0) {
 		prevSong = array[index - 1];
 	}
 
-	if (index >= 0) {
-		currentSong = array[index];
-	}
-
 	if (index < array.length - 1) {
 		nextSong = array[index + 1];
 	}
 
-	return {prevSong, currentSong, nextSong};
+	return {prevSong, nextSong};
 };
 
 export const songs = [

@@ -6,16 +6,11 @@ import HomeData from "./HomeData.vue";
 import SongCard from "/src/components/cards/SongCard.vue";
 import {songs, playlists} from "/src/lib/utils.js";
 import PlaylistCard from "@/components/cards/PlaylistCard.vue";
-import {useHistory} from "@/stores/useHistory";
 import Separator from "@/components/ui/separator/Separator.vue";
-const history = useHistory();
 
 const startPlaying = () => {
 	loadPlaylist("Linkin Park", songs, {
-		sort: "path",
-	});
-	history.$patch({
-		songs: [songs[0]],
+		key: "path",
 	});
 };
 </script>

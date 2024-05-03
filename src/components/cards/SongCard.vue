@@ -12,8 +12,7 @@ const startPlaying = () => {
 		song: {
 			isPaused: false,
 		},
-		songs: songs,
-		name: "Linkin Park",
+		songs,
 	});
 };
 
