@@ -1,6 +1,6 @@
 <script setup>
-import {ref, inject, watchEffect, watch} from "vue";
-import {usePlaylist} from "../usePlaylistApi";
+import {ref, inject} from "vue";
+import {usePlaylist} from "../../usePlaylistApi";
 
 const playlist = usePlaylist();
 const progressBarRef = ref(null);

@@ -1,9 +1,9 @@
 <script setup>
-import ProgressBar from "../components/ProgressBar.vue";
-import Controls from "../components/Controls.vue";
-import PlayerSongInfo from "./PlayerSongInfo.vue";
+import ProgressBar from "./ProgressBar.vue";
+import Controls from "./Controls.vue";
+import SongInfo from "./SongInfo.vue";
 import Volume from "./Volume.vue";
-import {onMounted, provide, ref} from "vue";
+import {provide, ref} from "vue";
 
 const audioRef = ref(null);
 provide("audioRef", audioRef);
@@ -17,7 +17,7 @@ provide("audioRef", audioRef);
 		<ProgressBar />
 		<div className="flex justify-between items-center w-full h-full px-6">
 			<Controls />
-			<PlayerSongInfo />
+			<SongInfo />
 			<Volume />
 		</div>
 	</div>

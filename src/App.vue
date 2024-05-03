@@ -1,5 +1,5 @@
 <script setup>
-import Player from "./components/Player.vue";
+import Player from "./components/Player/Player.vue";
 import LeftSidebar from "./components/shared/LeftSidebar.vue";
 import {RouterView} from "vue-router";
 </script>

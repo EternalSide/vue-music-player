@@ -1,5 +1,5 @@
 <script setup>
-import {Disc, Heart, Home, ListMusic, Youtube} from "lucide-vue-next";
+import {Home, ListMusic} from "lucide-vue-next";
 import {ref} from "vue";
 import {loadPlaylist} from "/src/usePlaylistApi";
 import {songs} from "/src/lib/utils.js";
@@ -15,23 +15,12 @@ const links = ref([
 		icon: ListMusic,
 		href: "/playlists",
 	},
-	{
-		label: "Favourites",
-		icon: Heart,
-		href: "/favourites",
-	},
-	{
-		label: "Youtube",
-		icon: Youtube,
-		href: "/youtube",
-	},
 ]);
 
 const playlists = ref([
 	{
 		label: "Linkin Park",
-		image:
-			"https://i.pinimg.com/736x/96/f6/b6/96f6b672d5a31dcadd89c16e55a9bc5c.jpg",
+		image: "/src/assets/playlist-logo.jpg",
 	},
 ]);
 </script>
@@ -47,10 +36,10 @@ const playlists = ref([
 		>
 			<img
 				class="rounded-full w-12 h-12 object-cover"
-				src="https://www.dotcom-monitor.com/wp-content/uploads/sites/3/2020/05/Vue-logo-1.png"
+				src="/src/assets/vue-logo.webp"
 			/>
 			<div class="max-lg:hidden">
-				<h1 class="font-bold text-2xl">ue-player</h1>
+				<h1 class="font-bold text-xl">ue-music-player</h1>
 			</div>
 		</RouterLink>
 		<div class="flex flex-col gap-0 max-lg:w-fit">
@@ -85,16 +74,7 @@ const playlists = ref([
 		<div
 			class="text-center flex flex-col items-start justify-center lg:p-6 max-lg:pb-5 text-neutral-400 gap-1.5"
 		>
-			<div class="flex items-center gap-3 max-lg:flex-col">
-				<a
-					target="_blank"
-					href="https://t.me/aat_l"
-				>
-					<img
-						class="rounded-full w-7 h-7"
-						src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/2048px-Telegram_logo.svg.png"
-					/>
-				</a>
+			<div class="flex items-center gap-1.5 max-lg:flex-col">
 				<a
 					target="_blank"
 					href="https://github.com/EternalSide/playa"
@@ -104,8 +84,8 @@ const playlists = ref([
 						src="https://cdn.worldvectorlogo.com/logos/github-icon-2.svg"
 					/>
 				</a>
+				<p class="max-lg:hidden text-sm">(c) vue-music-player</p>
 			</div>
-			<p class="max-lg:hidden text-sm">(c) Playa v 0.0.1</p>
 		</div>
 	</aside>
 </template>

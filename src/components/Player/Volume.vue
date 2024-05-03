@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref, inject} from "vue";
-import {usePlaylist} from "../usePlaylistApi";
+import {usePlaylist} from "../../usePlaylistApi";
 import {VolumeXIcon, Volume2Icon} from "lucide-vue-next";
 
 const playlist = usePlaylist();

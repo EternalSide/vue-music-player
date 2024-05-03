@@ -43,18 +43,11 @@ const isPlaying = computed(
 				</p>
 			</div>
 		</div>
-		<!-- <div>
-			<p
-				v-if:="isPlaylist"
-				className="text-sm text-neutral-400 mt-0.5 hover:text-indigo-500 transition"
-			>
-				{{ playlist.name }}
-			</p>
-		</div> -->
+
 		<img
 			v-if="isPlaying"
 			class="w-12 h-12 object-cover object-center rounded-full"
-			src="/playing.gif"
+			src="/src/assets/playing.gif"
 		/>
 	</div>
 </template>

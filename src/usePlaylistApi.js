@@ -5,7 +5,6 @@ import {usePlaylist as usePlaylistImpl} from "./stores/usePlaylist";
  */
 export const usePlaylist = () => {
 	const playlist = usePlaylistImpl();
-
 	return playlist;
 };
 

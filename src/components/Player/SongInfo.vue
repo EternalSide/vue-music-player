@@ -1,6 +1,6 @@
 <script setup>
 import {Heart} from "lucide-vue-next";
-import {usePlaylist} from "../usePlaylistApi";
+import {usePlaylist} from "../../usePlaylistApi";
 const playlist = usePlaylist();
 </script>
 
