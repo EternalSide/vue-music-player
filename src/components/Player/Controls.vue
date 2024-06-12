@@ -54,7 +54,7 @@ const handleHistory = (songToPlay) => {
 
 const handleRandom = () => {
 	const key = playlist.currentSong[playlist.options.key];
-	console.log("asd");
+
 	if (!playedStack.value[key]) {
 		playedStack.value[key] = playlist.currentSong;
 	}
